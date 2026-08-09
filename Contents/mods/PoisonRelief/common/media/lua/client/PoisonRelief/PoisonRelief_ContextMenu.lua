@@ -36,7 +36,7 @@ local function consumeTabletLocally(tablet, player)
     return true
 end
 
-local function completeTabletAction(tablet, playerNum)
+function PoisonRelief.completeTabletAction(tablet, playerNum)
     local player = getSpecificPlayer(playerNum)
     if not player or not tablet then return end
 
@@ -71,8 +71,7 @@ local function takeTablet(tablet, playerNum)
     ISTimedActionQueue.add(PoisonReliefTakeTabletAction:new(
         player,
         tablet,
-        playerNum,
-        completeTabletAction
+        playerNum
     ))
 end
 

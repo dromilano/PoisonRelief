@@ -1,4 +1,0 @@
-Tooltip_PTBR = {
-    Tooltip_PoisonRelief_GastroCalm = "Remédio industrializado para o estômago com dez doses. Cada comprimido reduz gradualmente em até 35 pontos a intoxicação alimentar ao longo de 90 minutos. Não trata a Infecção Knox.",
-    Tooltip_PoisonRelief_Herbal = "Um comprimido artesanal de capim-limão. Reduz gradualmente em até 22 pontos a intoxicação alimentar ao longo de duas horas. Não trata a Infecção Knox.",
-}
