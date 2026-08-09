@@ -1,85 +1,98 @@
-# Gastro-Calm & Herbal Tablets — Project Zomboid Build 42
+# Gastro-Calm & Herbal Tablets
 
-Adds two treatments for food poisoning with distinct availability and strength.
+A Project Zomboid Build 42 mod that adds factory-made Gastro-Calm Tablets and
+craftable Crude Herbal Tablets. Both treatments reduce Food Sickness gradually;
+they do not cure zombie infection, wound infection, colds, or ordinary damage.
 
-## Treatments
+## Repository layout
 
-| Item | Source | Effect |
-| --- | --- | --- |
-| Gastro-Calm Tablets | Medical loot | Ten-dose blister; each dose removes up to 35 Food Sickness over 90 in-game minutes |
-| Crude Herbal Tablet | Crafted | Removes up to 22 Food Sickness over two in-game hours |
+This repository is ready to upload as a Steam Workshop item:
 
-Additional doses add relief without slowing the active treatment rate. The
-fastest active medicine determines that rate, and at most 70 points of relief
-can be banked.
-Neither tablet changes zombie infection, wound infection, colds, or ordinary
-health directly. Treatment progress is stored in character mod data and
-survives saving and loading.
+```text
+preview.png
+workshop.txt
+Contents/
+  mods/
+    PoisonRelief/
+      42/
+      common/
+```
 
-## Multiplayer
-
-Pill use is server-authoritative in multiplayer. The client requests a dose;
-the server verifies the exact item ID and type in that player's carried
-inventory, consumes one dose, starts the treatment, and returns the approved
-treatment state to that client. The server and client then advance the same
-recovery curve, so the server retains persistent state while the local sickness
-moodle responds immediately.
-
-Enable the mod on the server and every connecting client. For a dedicated
-server, add `PoisonRelief` to the server's `Mods=` setting. If the mod is later
-published to Steam Workshop, also add its Workshop item ID to `WorkshopItems=`.
-Tablets must be in the player's main inventory or a carried bag before the
-**Take Stomach Relief Tablet** option appears.
-
-## Loot
-
-Gastro-Calm blister packs may appear in medical-clinic drug storage, medical
-storage, and rarely in bathroom counters. Each fresh blister contains ten
-doses, using the same remaining-uses mechanic as vanilla drainable medicines.
-Crude Herbal Tablets do not spawn as loot.
-Distribution changes affect unexplored containers; containers that have already
-generated their contents will not be rerolled.
-
-## Crafting
-
-Use a mortar and pestle with two units of lemongrass to make four Crude Herbal
-Tablets. The mortar and pestle is kept and may take light wear. Gastro-Calm
-cannot be crafted.
+The installable mod is `Contents/mods/PoisonRelief`. Build 42 metadata lives in
+`42/mod.info`, while scripts, Lua, translations, and textures live in `common`.
 
 ## Installation
 
-1. Extract the `PoisonRelief` folder into:
-   `C:\Users\YOUR_NAME\Zomboid\mods\`
-2. Enable **Gastro-Calm & Herbal Tablets** in the Mods menu.
-3. Restart the game before testing an existing save.
+### Steam Workshop
 
-## Testing
+Subscribe to the published Workshop item, enable **Gastro-Calm & Herbal
+Tablets** in the Mods menu, and restart the game before testing an existing
+save.
 
-Launch Project Zomboid with the Steam launch option `-debug`, enable the mod,
-load a test save, and use the debug Items List to add either item:
+### Manual installation
 
-`PoisonRelief.GastroCalmTablet` (one ten-dose blister)
+Copy the complete `Contents/mods/PoisonRelief` directory to your local mods
+directory:
 
-`PoisonRelief.CrudeHerbalTablet`
+```text
+C:\Users\YOUR_NAME\Zomboid\mods\PoisonRelief
+```
 
-Raise Food Sickness in the player-stat/body-damage debugger, right-click a
-tablet, and choose **Take Stomach Relief Tablet**. Advance game time and confirm
-that Food Sickness falls gradually rather than instantly.
+Enable the mod in Project Zomboid's Mods menu and restart the game.
 
-For multiplayer, repeat the test as a non-host client and confirm that exactly
-one tablet or blister dose is consumed. Disconnect during an active treatment,
-reconnect, and confirm that the remaining treatment continues. Also verify that
-another player cannot trigger or consume the first player's tablets.
+## Development and testing
 
-## Balance constants
+For local development, either copy `Contents/mods/PoisonRelief` into the local
+mods directory or create a directory junction to it. Launch Project Zomboid
+with the Steam launch option `-debug`, enable the mod, and use the debug Items
+List to add:
 
-Edit `common/media/lua/shared/PoisonRelief/PoisonRelief_Treatment.lua`. Each
-entry in `TREATMENTS` defines its `relief` and `hours`; `MAX_BANKED_RELIEF`
-limits stacked doses.
+- `PoisonRelief.GastroCalmTablet`
+- `PoisonRelief.CrudeHerbalTablet`
 
-## Build note
+Raise Food Sickness in the player-stat/body-damage debugger, take a tablet, and
+advance game time to confirm recovery is gradual. Distribution changes only
+affect containers whose loot has not already been generated.
 
-This prototype targets the current Build 42 versioned mod layout and its
-`craftRecipe` syntax. Build 42 is actively changing, so if a patch renames a
-vanilla ingredient or distribution, check `console.txt` and the corresponding
-vanilla scripts from your installed build.
+Balance values are defined in
+`Contents/mods/PoisonRelief/common/media/lua/shared/PoisonRelief/PoisonRelief_Treatment.lua`.
+Loot weights are defined in
+`Contents/mods/PoisonRelief/common/media/lua/server/Items/PoisonRelief_Distributions.lua`.
+
+## Workshop upload
+
+1. Open Project Zomboid's Workshop uploader.
+2. Select this repository root, which contains `preview.png`, `workshop.txt`,
+   and `Contents`.
+3. Review the preview, description, tags, and packaged mod before uploading.
+4. Keep the Workshop item **unlisted** unless intentionally changing its
+   visibility.
+5. After the first upload, let the uploader add the assigned Workshop ID; this
+   repository deliberately does not contain an invented ID.
+
+Do not upload the source ZIP or development-only temporary files.
+
+## Multiplayer
+
+Medicine use is server-authoritative. The server validates the item, consumes
+one dose, advances the treatment, and synchronizes approved state to the client.
+
+Enable `PoisonRelief` on the server and on every connecting client. For a
+dedicated server, add:
+
+```ini
+Mods=PoisonRelief
+```
+
+Once the mod has a real Steam Workshop ID, add that value to `WorkshopItems=`.
+Do not place the mod ID (`PoisonRelief`) in `WorkshopItems=`. For multiplayer
+testing, join as a non-host client, verify exactly one dose is consumed, then
+disconnect and reconnect during treatment to confirm progress persists.
+
+## Gameplay details
+
+Gastro-Calm blister packs appear in medical-clinic drug storage, medical
+storage, and rarely in bathroom counters. Crude Herbal Tablets are crafted from
+two units of lemongrass with a mortar and pestle. Additional doses may bank up
+to 70 points of relief, and the fastest active medicine controls the treatment
+rate.
