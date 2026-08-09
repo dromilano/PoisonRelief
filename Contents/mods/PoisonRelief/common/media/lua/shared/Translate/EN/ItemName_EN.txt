@@ -1,4 +1,0 @@
-ItemName_EN = {
-    ItemName_PoisonRelief.GastroCalmTablet = "Gastro-Calm Tablets",
-    ItemName_PoisonRelief.CrudeHerbalTablet = "Crude Herbal Tablet",
-}
