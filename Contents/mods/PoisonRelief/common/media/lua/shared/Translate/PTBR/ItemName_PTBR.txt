@@ -1,0 +1,4 @@
+ItemName_PTBR = {
+    ItemName_PoisonRelief.GastroCalmTablet = "Comprimidos Gastro-Calm",
+    ItemName_PoisonRelief.CrudeHerbalTablet = "Comprimido herbal artesanal",
+}
