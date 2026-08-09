@@ -1,0 +1,3 @@
+ContextMenu_EN = {
+    ContextMenu_PoisonRelief_TakeTablet = "Take Stomach Relief Tablet",
+}

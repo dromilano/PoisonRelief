@@ -1,0 +1,23 @@
+module PoisonRelief
+{
+    imports
+    {
+        Base
+    }
+
+    craftRecipe MakeCrudeHerbalTablets
+    {
+        Time = 120,
+        Tags = InHandCraft;Cooking,
+        category = Health,
+        inputs
+        {
+            item 2 [Base.LemonGrass] mode:destroy,
+            item 1 [Base.MortarPestle] mode:keep flags[MayDegradeLight],
+        }
+        outputs
+        {
+            item 4 PoisonRelief.CrudeHerbalTablet,
+        }
+    }
+}

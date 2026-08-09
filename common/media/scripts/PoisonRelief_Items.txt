@@ -1,0 +1,33 @@
+module PoisonRelief
+{
+    imports
+    {
+        Base
+    }
+
+    item GastroCalmTablet
+    {
+        Type = Drainable,
+        DisplayName = Gastro-Calm Tablets,
+        DisplayCategory = FirstAid,
+        Icon = GastroCalmTablets,
+        Weight = 0.10,
+        WeightEmpty = 0.01,
+        UseDelta = 0.10,
+        UseWhileEquipped = FALSE,
+        Medical = TRUE,
+        Tooltip = Tooltip_PoisonRelief_GastroCalm,
+    }
+
+    item CrudeHerbalTablet
+    {
+        Type = Normal,
+        DisplayName = Crude Herbal Tablet,
+        DisplayCategory = FirstAid,
+        Icon = CrudeHerbalTablets,
+        Weight = 0.01,
+        Medical = TRUE,
+        CanStack = TRUE,
+        Tooltip = Tooltip_PoisonRelief_Herbal,
+    }
+}
