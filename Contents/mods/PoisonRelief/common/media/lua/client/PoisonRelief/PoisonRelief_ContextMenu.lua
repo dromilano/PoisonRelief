@@ -1,4 +1,6 @@
 require "PoisonRelief/PoisonRelief_Treatment"
+require "PoisonRelief/PoisonRelief_TakeTabletAction"
+require "TimedActions/ISTimedActionQueue"
 
 local function findTablet(items, player)
     for _, entry in ipairs(items) do
@@ -34,7 +36,7 @@ local function consumeTabletLocally(tablet, player)
     return true
 end
 
-local function takeTablet(tablet, playerNum)
+local function completeTabletAction(tablet, playerNum)
     local player = getSpecificPlayer(playerNum)
     if not player or not tablet then return end
 
@@ -58,6 +60,20 @@ local function takeTablet(tablet, playerNum)
     if consumeTabletLocally(tablet, player) then
         PoisonRelief.startTreatment(player, itemType)
     end
+end
+
+local function takeTablet(tablet, playerNum)
+    local player = getSpecificPlayer(playerNum)
+    if not player or not tablet then return end
+    if not PoisonRelief.TREATMENTS[tablet:getFullType()] then return end
+    if not player:getInventory():containsRecursive(tablet) then return end
+
+    ISTimedActionQueue.add(PoisonReliefTakeTabletAction:new(
+        player,
+        tablet,
+        playerNum,
+        completeTabletAction
+    ))
 end
 
 local function findLocalPlayer(onlineID)
