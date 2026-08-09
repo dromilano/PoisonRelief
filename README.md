@@ -108,3 +108,5 @@ from `console.txt`.
 ## Credits
 
 Created by **Dro**.
+
+Preview images created with AI
