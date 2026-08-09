@@ -1,0 +1,14 @@
+# Workshop source and generated archives
+PoisonRelief-Workshop-*.zip
+*.zip
+
+# Temporary extraction and packaging directories
+.workshop-source/
+tmp/
+temp/
+
+# OS and editor noise (keep tracked .vscode settings)
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json

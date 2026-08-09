@@ -10,4 +10,4 @@ end
 
 addItem("MedicalClinicDrugs", 4.0)
 addItem("MedicalStorageDrugs", 5.0)
-addItem("BathroomCounter", 0.5)
+addItem("BathroomCounter", 0.35)
