@@ -7,7 +7,7 @@ module PoisonRelief
 
     item GastroCalmTablet
     {
-        Type = Drainable,
+        ItemType = base:drainable,
         DisplayName = Gastro-Calm Tablets,
         DisplayCategory = FirstAid,
         Icon = GastroCalmTablets,
@@ -23,7 +23,7 @@ module PoisonRelief
 
     item CrudeHerbalTablet
     {
-        Type = Normal,
+        ItemType = base:normal,
         DisplayName = Crude Herbal Tablet,
         DisplayCategory = FirstAid,
         Icon = CrudeHerbalTablets,
