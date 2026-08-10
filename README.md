@@ -79,7 +79,7 @@ applying the treatment.
 - **Multiplayer:** Supported
 - **Dependencies:** None
 - **Mod ID:** `PoisonRelief`
-- **Workshop ID:** To be assigned on publication
+- **Workshop ID:** 3780712089
 
 Servers and connecting players must all enable the mod.
 
