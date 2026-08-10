@@ -1,14 +1,10 @@
 require "PoisonRelief/PoisonRelief_Treatment"
 require "PoisonRelief/PoisonRelief_TakeTabletAction"
-require "ISUI/ISCraftingUI"
 require "ISUI/ISInventoryPaneContextMenu"
+require "TimedActions/ISInventoryTransferUtil"
 require "TimedActions/ISTimedActionQueue"
 
-local pendingSourceContainers = {}
-
-function PoisonRelief.clearPendingTabletSource(itemID)
-    pendingSourceContainers[tonumber(itemID)] = nil
-end
+local pendingTabletActions = {}
 
 local function findTablet(items, player)
     for _, entry in ipairs(items) do
@@ -44,7 +40,37 @@ local function consumeTabletLocally(tablet, player)
     return true
 end
 
-function PoisonRelief.completeTabletAction(tablet, playerNum)
+local function returnPendingTablet(requestId, player)
+    local pending = pendingTabletActions[tostring(requestId or "")]
+    pendingTabletActions[tostring(requestId or "")] = nil
+    if not pending or not player or pending.sourceIsMain then return end
+
+    local tablet = player:getInventory():getItemById(pending.itemId)
+    if not tablet or not pending.sourceContainer then return end
+
+    local ok, action = pcall(
+        ISInventoryTransferUtil.newInventoryTransferAction,
+        player,
+        tablet,
+        player:getInventory(),
+        pending.sourceContainer,
+        nil
+    )
+    if not ok or not action then
+        print("PoisonRelief: could not return tablet to source container; "
+            .. "leaving it in the player inventory")
+        return
+    end
+
+    action:setAllowMissingItems(true)
+    ISTimedActionQueue.add(action)
+end
+
+function PoisonRelief.cancelTabletAction(requestId, playerNum)
+    returnPendingTablet(requestId, getSpecificPlayer(playerNum))
+end
+
+function PoisonRelief.completeTabletAction(tablet, playerNum, requestId)
     local player = getSpecificPlayer(playerNum)
     if not player or not tablet then return end
 
@@ -57,6 +83,7 @@ function PoisonRelief.completeTabletAction(tablet, playerNum)
             PoisonRelief.NET_MODULE,
             PoisonRelief.NET_TAKE_TABLET,
             {
+                requestId = requestId,
                 itemId = tablet:getID(),
                 itemType = itemType,
             }
@@ -68,6 +95,7 @@ function PoisonRelief.completeTabletAction(tablet, playerNum)
     if consumeTabletLocally(tablet, player) then
         PoisonRelief.startTreatment(player, itemType)
     end
+    returnPendingTablet(requestId, player)
 end
 
 local function takeTablet(tablet, playerNum)
@@ -78,15 +106,18 @@ local function takeTablet(tablet, playerNum)
     local sourceContainer = tablet:getContainer()
     if not sourceContainer then return end
 
-    pendingSourceContainers[tablet:getID()] = sourceContainer
-    ISInventoryPaneContextMenu.transferIfNeeded(player, tablet)
-
-    ISTimedActionQueue.add(PoisonReliefTakeTabletAction:new(
+    local action = PoisonReliefTakeTabletAction:new(
         player,
         tablet,
         playerNum
-    ))
-    ISCraftingUI.ReturnItemToContainer(player, tablet, sourceContainer)
+    )
+    pendingTabletActions[action.requestId] = {
+        itemId = tablet:getID(),
+        sourceContainer = sourceContainer,
+        sourceIsMain = sourceContainer == player:getInventory(),
+    }
+    ISInventoryPaneContextMenu.transferIfNeeded(player, tablet)
+    ISTimedActionQueue.add(action)
 end
 
 local function findLocalPlayer(onlineID)
@@ -106,11 +137,6 @@ local function mirrorConsumedItem(player, args)
 
     local inventory = player:getInventory()
     local tablet = inventory:getItemById(itemID)
-    local sourceContainer = pendingSourceContainers[itemID]
-    if not tablet and sourceContainer then
-        tablet = sourceContainer:getItemById(itemID)
-    end
-    pendingSourceContainers[itemID] = nil
     if not tablet then return end
 
     if args.itemRemoved then
@@ -119,9 +145,9 @@ local function mirrorConsumedItem(player, args)
         return
     end
 
-    local currentUses = tonumber(args.currentUses)
-    if tablet:IsDrainable() and currentUses then
-        tablet:setUsedDelta(math.max(0, currentUses))
+    local usedDelta = tonumber(args.usedDelta)
+    if tablet:IsDrainable() and usedDelta then
+        tablet:setUsedDelta(math.max(0, math.min(1, usedDelta)))
     end
 end
 
@@ -133,10 +159,21 @@ local function onServerCommand(module, command, args)
 
     if command == PoisonRelief.NET_TREATMENT_STARTED then
         mirrorConsumedItem(player, args)
+        local stats = player:getStats()
+        stats:set(
+            CharacterStat.FOOD_SICKNESS,
+            tonumber(args.foodSickness) or 0
+        )
+        stats:set(CharacterStat.POISON, tonumber(args.poison) or 0)
         PoisonRelief.setTreatmentState(player, args)
+        returnPendingTablet(args.requestId, player)
     elseif command == PoisonRelief.NET_TREATMENT_REJECTED then
-        print("PoisonRelief: server rejected tablet request: "
+        print("PoisonRelief: rejected request="
+            .. tostring(args.requestId) .. " item="
+            .. tostring(args.itemId) .. " type="
+            .. tostring(args.itemType) .. " reason="
             .. tostring(args.reason or "unknown reason"))
+        returnPendingTablet(args.requestId, player)
     end
 end
 
