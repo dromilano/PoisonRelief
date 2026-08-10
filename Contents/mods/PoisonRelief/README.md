@@ -6,12 +6,13 @@ Adds two treatments for food poisoning with distinct availability and strength.
 
 | Item | Source | Effect |
 | --- | --- | --- |
-| Gastro-Calm Tablets | Medical loot | Ten-dose blister; each dose removes up to 35 Food Sickness over 90 in-game minutes |
-| Crude Herbal Tablet | Crafted | Removes up to 22 Food Sickness over two in-game hours |
+| Gastro-Calm Tablets | Medical loot | Ten-dose blister; each dose applies 10 relief immediately, then 25 over 45 in-game minutes (35 total) |
+| Crude Herbal Tablet | Crafted | Applies 7 relief immediately, then 15 over one in-game hour (22 total) |
 
-Additional doses add relief without slowing the active treatment rate. The
-fastest active medicine determines that rate, and at most 70 points of relief
-can be banked.
+Each relief point reduces both Food Sickness and Poison, independently clamped
+at zero. Additional doses add progressive relief without slowing the active
+treatment rate. The fastest active medicine determines that rate, and at most
+70 progressive-relief points can be banked.
 Neither tablet changes zombie infection, wound infection, colds, or ordinary
 health directly. Treatment progress is stored in character mod data and
 survives saving and loading.
@@ -28,8 +29,10 @@ moodle responds immediately.
 Enable the mod on the server and every connecting client. For a dedicated
 server, add `PoisonRelief` to the server's `Mods=` setting. If the mod is later
 published to Steam Workshop, also add its Workshop item ID to `WorkshopItems=`.
-Tablets must be in the player's main inventory or a carried bag before the
-**Take Stomach Relief Tablet** option appears.
+Tablets can be selected in the player's inventory, a carried bag, an accessible
+loot container, or the floor inventory. External tablets follow the vanilla
+painkiller transfer flow. A remaining Gastro-Calm blister returns to its
+original container; a Crude Herbal Tablet is consumed completely.
 
 ## Loot
 
@@ -62,9 +65,9 @@ load a test save, and use the debug Items List to add either item:
 
 `PoisonRelief.CrudeHerbalTablet`
 
-Raise Food Sickness in the player-stat/body-damage debugger, right-click a
-tablet, and choose **Take Stomach Relief Tablet**. Advance game time and confirm
-that Food Sickness falls gradually rather than instantly.
+Raise Food Sickness and Poison in the player-stat debugger, right-click a
+tablet, and choose **Take Stomach Relief Tablet**. Confirm the immediate relief,
+then advance game time and confirm that the progressive remainder is applied.
 
 For multiplayer, repeat the test as a non-host client and confirm that exactly
 one tablet or blister dose is consumed. Disconnect during an active treatment,
@@ -74,8 +77,8 @@ another player cannot trigger or consume the first player's tablets.
 ## Balance constants
 
 Edit `common/media/lua/shared/PoisonRelief/PoisonRelief_Treatment.lua`. Each
-entry in `TREATMENTS` defines its `relief` and `hours`; `MAX_BANKED_RELIEF`
-limits stacked doses.
+entry in `TREATMENTS` defines its `immediateRelief`, `progressiveRelief`, and
+`hours`; `MAX_BANKED_RELIEF` limits stacked progressive doses.
 
 ## Build note
 

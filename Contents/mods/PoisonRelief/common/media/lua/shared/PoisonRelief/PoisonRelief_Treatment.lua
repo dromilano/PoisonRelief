@@ -4,12 +4,14 @@ PoisonRelief.MAX_BANKED_RELIEF = 70.0
 
 PoisonRelief.TREATMENTS = {
     ["PoisonRelief.GastroCalmTablet"] = {
-        relief = 35.0,
-        hours = 1.5,
+        immediateRelief = 10.0,
+        progressiveRelief = 25.0,
+        hours = 0.75,
     },
     ["PoisonRelief.CrudeHerbalTablet"] = {
-        relief = 22.0,
-        hours = 2.0,
+        immediateRelief = 7.0,
+        progressiveRelief = 15.0,
+        hours = 1.0,
     },
 }
 
@@ -28,6 +30,21 @@ local function clearTreatment(data)
     data[KEY_RATE] = nil
     data[KEY_LAST_HOUR] = nil
     data[LEGACY_KEY_END_HOUR] = nil
+end
+
+local function applyRelief(player, relief)
+    local stats = player and player:getStats()
+    if not stats then return false end
+
+    local foodSickness = stats:get(CharacterStat.FOOD_SICKNESS)
+    local poison = stats:get(CharacterStat.POISON)
+
+    stats:set(
+        CharacterStat.FOOD_SICKNESS,
+        math.max(0, foodSickness - relief)
+    )
+    stats:set(CharacterStat.POISON, math.max(0, poison - relief))
+    return true
 end
 
 function PoisonRelief.getTreatmentState(player)
@@ -92,10 +109,8 @@ function PoisonRelief.updateTreatment(player)
     if elapsed <= 0 then return false, false end
 
     local relief = math.min(remaining, rate * elapsed)
-    local bodyDamage = player:getBodyDamage()
-    local sickness = bodyDamage:getFoodSicknessLevel()
+    if not applyRelief(player, relief) then return false, false end
 
-    bodyDamage:setFoodSicknessLevel(math.max(0, sickness - relief))
     data[KEY_REMAINING] = math.max(0, remaining - relief)
     data[KEY_LAST_HOUR] = now
 
@@ -116,6 +131,9 @@ function PoisonRelief.startTreatment(player, itemType)
     -- Bank any relief earned since the previous update before adding a dose.
     PoisonRelief.updateTreatment(player)
 
+    -- This function is called only after a tablet was successfully consumed.
+    if not applyRelief(player, treatment.immediateRelief) then return nil end
+
     local now = getGameTime():getWorldAgeHours()
     local data = player:getModData()
     local remaining = tonumber(data[KEY_REMAINING]) or 0
@@ -123,11 +141,11 @@ function PoisonRelief.startTreatment(player, itemType)
 
     data[KEY_REMAINING] = math.min(
         PoisonRelief.MAX_BANKED_RELIEF,
-        remaining + treatment.relief
+        remaining + treatment.progressiveRelief
     )
     data[KEY_RATE] = math.max(
         currentRate,
-        treatment.relief / treatment.hours
+        treatment.progressiveRelief / treatment.hours
     )
     data[KEY_LAST_HOUR] = now
     data[LEGACY_KEY_END_HOUR] = nil

@@ -5,16 +5,19 @@
 A Project Zomboid Build 42 mod that adds two treatments for Food Sickness:
 factory-made **Gastro-Calm Tablets** and craftable **Crude Herbal Tablets**.
 
-Both medicines work gradually. They can give a poisoned survivor a fighting
-chance without making dangerous food completely harmless.
+Both medicines provide limited immediate relief and continue working over time.
+They can give a poisoned survivor a fighting chance without making dangerous
+food completely harmless.
 
 ## Features
 
 - Factory-made Gastro-Calm blister packs found in medical loot.
 - A craftable herbal alternative made from lemongrass.
-- Gradual treatment rather than an instant cure.
+- Immediate relief followed by progressive treatment.
 - Ten doses per Gastro-Calm blister pack.
-- Stackable relief, capped at 70 Food Sickness points.
+- Reduces both Food Sickness and Poison by the same amount.
+- Progressive relief can stack up to a 70-point treatment-bank cap.
+- Can be taken from carried bags, accessible loot containers, and the floor.
 - Single-player and multiplayer support.
 - Server-authoritative medicine use in multiplayer.
 - No dependencies.
@@ -23,17 +26,18 @@ chance without making dangerous food completely harmless.
 
 | Treatment | How to obtain | Effect per dose |
 | --- | --- | --- |
-| **Gastro-Calm Tablets** | Medical loot | Removes up to 35 Food Sickness over 90 in-game minutes |
-| **Crude Herbal Tablet** | Crafting | Removes up to 22 Food Sickness over two in-game hours |
+| **Gastro-Calm Tablets** | Medical loot | 10 immediate relief, then 25 over 45 in-game minutes (35 total) |
+| **Crude Herbal Tablet** | Crafting | 7 immediate relief, then 15 over one in-game hour (22 total) |
 
 Taking another dose can add more relief, but it does not make the active
 treatment run faster. When different medicines are active, the fastest one
 determines the recovery rate.
 
 > [!IMPORTANT]
-> These tablets reduce Food Sickness. They do not cure zombie infection, wound
+> Each relief point reduces both Food Sickness and Poison, independently
+> clamped at zero. These tablets do not cure zombie infection, wound
 > infection, colds, or directly restore ordinary health. Because treatment is
-> gradual, taking a tablet too late may not save the character.
+> partly gradual, taking a tablet too late may not save the character.
 
 ## Finding Gastro-Calm
 
@@ -56,8 +60,13 @@ Crude Herbal Tablets do not spawn as loot, and Gastro-Calm cannot be crafted.
 
 ## Using the tablets
 
-Keep the medicine in the character's main inventory or a carried bag.
-Right-click it and choose **Take Stomach Relief Tablet**.
+Select the medicine in the character's inventory, a carried bag, an accessible
+loot container, or the floor inventory. Right-click it and choose **Take
+Stomach Relief Tablet**.
+
+The game temporarily transfers externally stored medicine using the same flow
+as vanilla painkillers. A Gastro-Calm blister returns to its original container
+with one fewer dose, while a Crude Herbal Tablet is consumed completely.
 
 Treatment progress is stored with the character and continues after saving and
 loading. In multiplayer, the server validates and consumes each dose before
