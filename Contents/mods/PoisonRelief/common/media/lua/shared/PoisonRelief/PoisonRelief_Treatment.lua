@@ -7,11 +7,13 @@ PoisonRelief.TREATMENTS = {
         immediateRelief = 10.0,
         progressiveRelief = 25.0,
         hours = 0.75,
+        thirstIncrease = 0.12,
     },
     ["PoisonRelief.CrudeHerbalTablet"] = {
         immediateRelief = 7.0,
         progressiveRelief = 15.0,
         hours = 1.0,
+        thirstIncrease = 0.08,
     },
 }
 
@@ -128,11 +130,21 @@ function PoisonRelief.startTreatment(player, itemType)
     local treatment = PoisonRelief.TREATMENTS[itemType]
     if not treatment then return nil end
 
+    local stats = player:getStats()
+    if not stats then return nil end
+
     -- Bank any relief earned since the previous update before adding a dose.
     PoisonRelief.updateTreatment(player)
 
     -- This function is called only after a tablet was successfully consumed.
     if not applyRelief(player, treatment.immediateRelief) then return nil end
+    stats:set(
+        CharacterStat.THIRST,
+        math.min(
+            CharacterStat.THIRST:getMaximumValue(),
+            stats:get(CharacterStat.THIRST) + treatment.thirstIncrease
+        )
+    )
 
     local now = getGameTime():getWorldAgeHours()
     local data = player:getModData()

@@ -1,4 +1,4 @@
 {
-  "Tooltip_PoisonRelief_GastroCalm": "Factory-made stomach medicine containing ten doses. Reduces food sickness over 45 minutes. Does not treat the Knox Infection.",
-  "Tooltip_PoisonRelief_Herbal": "A rough lemongrass tablet. Reduces food sickness over one hour. Does not treat the Knox Infection."
+  "Tooltip_PoisonRelief_GastroCalm": "Factory-made stomach medicine containing ten doses. Reduces food sickness over 45 minutes. Causes significant thirst. Does not treat the Knox Infection.",
+  "Tooltip_PoisonRelief_Herbal": "A rough lemongrass tablet. Reduces food sickness over one hour. Causes thirst. Does not treat the Knox Infection."
 }

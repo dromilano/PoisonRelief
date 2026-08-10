@@ -1,4 +1,4 @@
 {
-  "Tooltip_PoisonRelief_GastroCalm": "Remédio industrializado para o estômago com dez doses. Cada comprimido reduz gradualmente a intoxicação alimentar ao longo de 45 minutos. Não trata a Infecção Knox.",
-  "Tooltip_PoisonRelief_Herbal": "Um comprimido artesanal de capim-limão. Reduz gradualmente a intoxicação alimentar ao longo de uma hora. Não trata a Infecção Knox."
+  "Tooltip_PoisonRelief_GastroCalm": "Remédio industrializado para o estômago com dez doses. Cada comprimido reduz gradualmente a intoxicação alimentar ao longo de 45 minutos. Causa muita sede. Não trata a Infecção Knox.",
+  "Tooltip_PoisonRelief_Herbal": "Um comprimido artesanal de capim-limão. Reduz gradualmente a intoxicação alimentar ao longo de uma hora. Causa sede. Não trata a Infecção Knox."
 }
