@@ -21,7 +21,7 @@ local function isUsableTablet(item)
 end
 
 function PoisonReliefTakeTabletAction:isValid()
-    if self.didComplete or not self.character then return false end
+    if not self.character then return false end
 
     if isClient() then
         return isUsableTablet(findTabletById(
@@ -54,30 +54,40 @@ end
 
 function PoisonReliefTakeTabletAction:stop()
     if self.item then self.item:setJobDelta(0.0) end
-    if PoisonRelief.clearPendingTabletSource then
-        PoisonRelief.clearPendingTabletSource(self.itemId)
-    end
     ISBaseTimedAction.stop(self)
+    if not isServer() and PoisonRelief.cancelTabletAction then
+        PoisonRelief.cancelTabletAction(self.requestId, self.playerNum)
+    end
+end
+
+function PoisonReliefTakeTabletAction:forceCancel()
+    if not isServer() and PoisonRelief.cancelTabletAction then
+        PoisonRelief.cancelTabletAction(self.requestId, self.playerNum)
+    end
 end
 
 function PoisonReliefTakeTabletAction:perform()
     if self.item then self.item:setJobDelta(0.0) end
+
+    if not isServer() and not self.didSubmit and self:isValid() then
+        self.item = findTabletById(self.character, self.itemId)
+        self.didSubmit = true
+        if PoisonRelief.completeTabletAction then
+            PoisonRelief.completeTabletAction(
+                self.item,
+                self.playerNum,
+                self.requestId
+            )
+        end
+    end
+
     ISBaseTimedAction.perform(self)
 end
 
 function PoisonReliefTakeTabletAction:complete()
-    if self.didComplete or not self:isValid() then return false end
-
-    if isClient() then
-        self.item = findTabletById(self.character, self.itemId)
-    end
-
-    self.didComplete = true
-    if self.character:isLocalPlayer()
-        and PoisonRelief.completeTabletAction then
-        PoisonRelief.completeTabletAction(self.item, self.playerNum)
-    end
-    return true
+    -- Build 42 runs authoritative action validation here. Consumption is
+    -- handled only by the TakeTablet command submitted from local perform().
+    return self:isValid()
 end
 
 function PoisonReliefTakeTabletAction:new(character, item, playerNum)
@@ -85,7 +95,11 @@ function PoisonReliefTakeTabletAction:new(character, item, playerNum)
     action.item = item
     action.itemId = item:getID()
     action.playerNum = playerNum
-    action.didComplete = false
+    action.requestId = tostring(character:getOnlineID())
+        .. ":" .. tostring(item:getID())
+        .. ":" .. tostring(getTimestampMs())
+        .. ":" .. tostring(ZombRand(1000000))
+    action.didSubmit = false
     action.stopOnWalk = true
     action.stopOnRun = true
     action.stopOnAim = true
