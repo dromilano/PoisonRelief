@@ -17,8 +17,8 @@ module PoisonRelief
         UseWhileEquipped = FALSE,
         Medical = TRUE,
         Tooltip = Tooltip_PoisonRelief_GastroCalm,
-        StaticModel = CaffeinePills,
-        WorldStaticModel = CaffeinePills,
+        StaticModel = GastroCalmWorld,
+        WorldStaticModel = GastroCalmWorld,
     }
 
     item CrudeHerbalTablet
@@ -32,6 +32,6 @@ module PoisonRelief
         CanStack = TRUE,
         Tooltip = Tooltip_PoisonRelief_Herbal,
         StaticModel = WaterPurificationTablets,
-        WorldStaticModel = WaterPurificationTablets,
+        WorldStaticModel = CrudeHerbalTabletWorld,
     }
 }

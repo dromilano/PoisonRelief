@@ -1,0 +1,16 @@
+module PoisonRelief
+{
+    model GastroCalmWorld
+    {
+        mesh = CaffinePills,
+        texture = WorldItems/PoisonRelief_GastroCalm,
+        scale = 0.1,
+    }
+
+    model CrudeHerbalTabletWorld
+    {
+        mesh = WorldItems/Antibiotics,
+        texture = WorldItems/PoisonRelief_CrudeHerbalTablet,
+        scale = 0.6,
+    }
+}
