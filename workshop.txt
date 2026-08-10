@@ -1,5 +1,5 @@
 version=1
-id=
+id=3780712089
 title=Gastro-Calm & Herbal Tablets [B42]
 description=[h1]Gastro-Calm & Herbal Tablets[/h1]
 description=[b]For Project Zomboid Build 42.[/b]

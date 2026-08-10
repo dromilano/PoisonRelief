@@ -67,7 +67,7 @@ local function consumeTablet(tablet)
     if tablet:IsDrainable() then
         tablet:Use()
         itemRemoved = tablet:getContainer() == nil
-        usedDelta = itemRemoved and 0 or tablet:getUsedDelta()
+        usedDelta = itemRemoved and 0 or tablet:getCurrentUsesFloat()
         if not itemRemoved then sendItemStats(tablet) end
     else
         container:Remove(tablet)
