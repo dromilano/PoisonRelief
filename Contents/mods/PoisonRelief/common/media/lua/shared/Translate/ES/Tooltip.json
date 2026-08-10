@@ -1,4 +1,4 @@
 {
-  "Tooltip_PoisonRelief_GastroCalm": "Medicamento estomacal de fabricación industrial con diez dosis. Cada tableta reduce gradualmente hasta 35 puntos de intoxicación alimentaria durante 90 minutos. No trata la infección Knox.",
-  "Tooltip_PoisonRelief_Herbal": "Una tableta artesanal de citronela. Reduce gradualmente hasta 22 puntos de intoxicación alimentaria durante dos horas. No trata la infección Knox."
+  "Tooltip_PoisonRelief_GastroCalm": "Medicamento estomacal de fabricación industrial con diez dosis. Reduce gradualmente la intoxicación alimentaria durante 45 minutos. No trata la infección Knox.",
+  "Tooltip_PoisonRelief_Herbal": "Una tableta artesanal de citronela. Reduce gradualmente la intoxicación alimentaria durante una hora. No trata la infección Knox."
 }
