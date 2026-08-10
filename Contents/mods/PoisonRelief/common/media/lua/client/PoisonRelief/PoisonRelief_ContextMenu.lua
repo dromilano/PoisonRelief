@@ -165,6 +165,10 @@ local function onServerCommand(module, command, args)
             tonumber(args.foodSickness) or 0
         )
         stats:set(CharacterStat.POISON, tonumber(args.poison) or 0)
+        local thirst = tonumber(args.thirst)
+        if thirst then
+            stats:set(CharacterStat.THIRST, thirst)
+        end
         PoisonRelief.setTreatmentState(player, args)
         returnPendingTablet(args.requestId, player)
     elseif command == PoisonRelief.NET_TREATMENT_REJECTED then

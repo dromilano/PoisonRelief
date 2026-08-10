@@ -110,6 +110,7 @@ local function handleTakeTablet(player, args)
         usedDelta = consumed.usedDelta,
         foodSickness = stats:get(CharacterStat.FOOD_SICKNESS),
         poison = stats:get(CharacterStat.POISON),
+        thirst = stats:get(CharacterStat.THIRST),
         remaining = state.remaining,
         rate = state.rate,
         lastHour = state.lastHour,
