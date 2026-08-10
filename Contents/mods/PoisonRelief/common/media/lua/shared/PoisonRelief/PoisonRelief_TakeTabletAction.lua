@@ -10,7 +10,6 @@ local function findTabletById(character, itemId)
 
     local inventory = character:getInventory()
     return inventory:getItemById(itemId)
-        or inventory:getItemWithIDRecursiv(itemId)
 end
 
 local function isUsableTablet(item)
@@ -18,7 +17,7 @@ local function isUsableTablet(item)
         return false
     end
 
-    return not item:IsDrainable() or item:getUsedDelta() > 0
+    return not item:IsDrainable() or item:getCurrentUsesFloat() > 0
 end
 
 function PoisonReliefTakeTabletAction:isValid()
@@ -32,7 +31,7 @@ function PoisonReliefTakeTabletAction:isValid()
     end
 
     return self.item
-        and self.character:getInventory():containsRecursive(self.item)
+        and self.character:getInventory():contains(self.item)
         and isUsableTablet(self.item)
 end
 
@@ -55,6 +54,9 @@ end
 
 function PoisonReliefTakeTabletAction:stop()
     if self.item then self.item:setJobDelta(0.0) end
+    if PoisonRelief.clearPendingTabletSource then
+        PoisonRelief.clearPendingTabletSource(self.itemId)
+    end
     ISBaseTimedAction.stop(self)
 end
 

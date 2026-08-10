@@ -23,15 +23,14 @@ local function findRequestedTablet(player, args)
 
     local inventory = player:getInventory()
     local tablet = inventory:getItemById(itemID)
-        or inventory:getItemWithIDRecursiv(itemID)
 
-    if not tablet or not inventory:containsRecursive(tablet) then
+    if not tablet or not inventory:contains(tablet) then
         return nil, "tablet is not in the player's inventory"
     end
     if tablet:getFullType() ~= requestedType then
         return nil, "tablet type does not match"
     end
-    if tablet:IsDrainable() and tablet:getUsedDelta() <= 0 then
+    if tablet:IsDrainable() and tablet:getCurrentUsesFloat() <= 0 then
         return nil, "tablet blister is empty"
     end
 
@@ -44,12 +43,13 @@ local function consumeTablet(tablet)
 
     local itemID = tablet:getID()
     local itemRemoved = false
-    local usedDelta = nil
+    local currentUses = nil
 
     if tablet:IsDrainable() then
         tablet:Use()
         itemRemoved = tablet:getContainer() == nil
-        usedDelta = itemRemoved and 0 or tablet:getUsedDelta()
+        currentUses = itemRemoved and 0 or tablet:getCurrentUsesFloat()
+        if not itemRemoved then sendItemStats(tablet) end
     else
         container:Remove(tablet)
         itemRemoved = true
@@ -58,7 +58,7 @@ local function consumeTablet(tablet)
     return {
         itemId = itemID,
         itemRemoved = itemRemoved,
-        usedDelta = usedDelta,
+        currentUses = currentUses,
     }
 end
 
@@ -82,6 +82,7 @@ local function handleTakeTablet(player, args)
         return
     end
 
+    sendPlayerEffects(player)
     player:transmitModData()
     sendServerCommand(
         player,
@@ -91,7 +92,7 @@ local function handleTakeTablet(player, args)
             onlineID = player:getOnlineID(),
             itemId = consumed.itemId,
             itemRemoved = consumed.itemRemoved,
-            usedDelta = consumed.usedDelta,
+            currentUses = consumed.currentUses,
             remaining = state.remaining,
             rate = state.rate,
             lastHour = state.lastHour,

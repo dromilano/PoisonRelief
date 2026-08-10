@@ -1,6 +1,14 @@
 require "PoisonRelief/PoisonRelief_Treatment"
 require "PoisonRelief/PoisonRelief_TakeTabletAction"
+require "ISUI/ISCraftingUI"
+require "ISUI/ISInventoryPaneContextMenu"
 require "TimedActions/ISTimedActionQueue"
+
+local pendingSourceContainers = {}
+
+function PoisonRelief.clearPendingTabletSource(itemID)
+    pendingSourceContainers[tonumber(itemID)] = nil
+end
 
 local function findTablet(items, player)
     for _, entry in ipairs(items) do
@@ -11,7 +19,7 @@ local function findTablet(items, player)
         if item and item.getFullType then
             local itemType = item:getFullType()
             if PoisonRelief.TREATMENTS[itemType]
-                and player:getInventory():containsRecursive(item) then
+                and item:getContainer() then
                 return item
             end
         end
@@ -21,13 +29,13 @@ end
 
 local function consumeTabletLocally(tablet, player)
     if not tablet or not player then return false end
-    if not player:getInventory():containsRecursive(tablet) then return false end
+    if not player:getInventory():contains(tablet) then return false end
 
     local container = tablet:getContainer()
     if not container then return false end
 
     if tablet:IsDrainable() then
-        if tablet:getUsedDelta() <= 0 then return false end
+        if tablet:getCurrentUsesFloat() <= 0 then return false end
         tablet:Use()
     else
         container:Remove(tablet)
@@ -66,13 +74,19 @@ local function takeTablet(tablet, playerNum)
     local player = getSpecificPlayer(playerNum)
     if not player or not tablet then return end
     if not PoisonRelief.TREATMENTS[tablet:getFullType()] then return end
-    if not player:getInventory():containsRecursive(tablet) then return end
+
+    local sourceContainer = tablet:getContainer()
+    if not sourceContainer then return end
+
+    pendingSourceContainers[tablet:getID()] = sourceContainer
+    ISInventoryPaneContextMenu.transferIfNeeded(player, tablet)
 
     ISTimedActionQueue.add(PoisonReliefTakeTabletAction:new(
         player,
         tablet,
         playerNum
     ))
+    ISCraftingUI.ReturnItemToContainer(player, tablet, sourceContainer)
 end
 
 local function findLocalPlayer(onlineID)
@@ -92,7 +106,11 @@ local function mirrorConsumedItem(player, args)
 
     local inventory = player:getInventory()
     local tablet = inventory:getItemById(itemID)
-        or inventory:getItemWithIDRecursiv(itemID)
+    local sourceContainer = pendingSourceContainers[itemID]
+    if not tablet and sourceContainer then
+        tablet = sourceContainer:getItemById(itemID)
+    end
+    pendingSourceContainers[itemID] = nil
     if not tablet then return end
 
     if args.itemRemoved then
@@ -101,9 +119,9 @@ local function mirrorConsumedItem(player, args)
         return
     end
 
-    local usedDelta = tonumber(args.usedDelta)
-    if tablet:IsDrainable() and usedDelta then
-        tablet:setUsedDelta(math.max(0, usedDelta))
+    local currentUses = tonumber(args.currentUses)
+    if tablet:IsDrainable() and currentUses then
+        tablet:setUsedDelta(math.max(0, currentUses))
     end
 end
 
