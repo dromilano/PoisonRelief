@@ -53,8 +53,9 @@ contents have not already been generated.
 
 ## Crafting the herbal alternative
 
-Use a mortar and pestle with **two units of lemongrass** to make **four Crude
-Herbal Tablets**. The mortar and pestle is kept and may take light wear.
+Use a standard or crafted ceramic mortar and pestle with **two units of
+lemongrass** to make **four Crude Herbal Tablets**. The mortar and pestle is
+kept and may take light wear.
 
 Crude Herbal Tablets do not spawn as loot, and Gastro-Calm cannot be crafted.
 
@@ -87,7 +88,7 @@ Servers and connecting players must all enable the mod.
 
 ### Steam Workshop
 
-The Workshop release is coming soon. Once published, subscribe to the item,
+Subscribe to [Poison Relief on Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3780712089),
 enable **Gastro-Calm & Herbal Tablets** in the Mods menu, and restart the game.
 
 ### Manual installation

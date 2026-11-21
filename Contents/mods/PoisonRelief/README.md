@@ -45,8 +45,9 @@ generated their contents will not be rerolled.
 
 ## Crafting
 
-Use a mortar and pestle with two units of lemongrass to make four Crude Herbal
-Tablets. The mortar and pestle is kept and may take light wear. Gastro-Calm
+Use a standard or crafted ceramic mortar and pestle with two units of lemongrass
+to make four Crude Herbal Tablets. The mortar and pestle is kept and may take
+light wear. Gastro-Calm
 cannot be crafted.
 
 ## Installation

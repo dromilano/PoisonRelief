@@ -14,7 +14,7 @@ module PoisonRelief
         inputs
         {
             item 2 [Base.LemonGrass] mode:destroy,
-            item 1 [Base.MortarPestle] mode:keep flags[MayDegradeLight],
+            item 1 tags[base:mortarpestle] mode:keep flags[MayDegradeLight],
         }
         outputs
         {
